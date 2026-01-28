@@ -848,12 +848,6 @@ function handleRoute() {
     return;
   }
 
-  const legacySlug = decodeURIComponent(path.slice(1));
-  if (legacySlug && !legacySlug.includes("/")) {
-    navigateTo(`${RECIPE_PREFIX}${encodeURIComponent(legacySlug)}`, { replace: true });
-    return;
-  }
-
   setActiveView("home");
   setPageTitle("Recipes");
 }
