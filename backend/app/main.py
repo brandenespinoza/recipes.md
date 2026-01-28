@@ -30,8 +30,9 @@ from .security import create_access_token, hash_password, verify_password
 
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
+        normalized_path = path.lstrip("/")
         try:
-            response = await super().get_response(path, scope)
+            response = await super().get_response(normalized_path, scope)
         except HTTPException as exc:
             if exc.status_code != status.HTTP_404_NOT_FOUND:
                 raise
@@ -41,12 +42,36 @@ class SPAStaticFiles(StaticFiles):
             return response
 
         # Avoid swallowing API 404s or missing asset files with extensions.
-        if path.startswith("api/") or Path(path).suffix:
+        if (
+            normalized_path == "api"
+            or normalized_path.startswith("api/")
+            or Path(normalized_path).suffix
+        ):
             if response is not None:
                 return response
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
         return await super().get_response("index.html", scope)
+
+
+def resolve_frontend_dir() -> Path:
+    frontend_root = Path(__file__).resolve().parents[2] / "frontend"
+    frontend_dist = frontend_root / "dist"
+    frontend_dir = frontend_dist if frontend_dist.exists() else frontend_root
+
+    if not frontend_root.exists():
+        raise RuntimeError(
+            "Frontend assets are missing. Ensure the Docker image includes /app/frontend "
+            "or provide frontend/dist for production builds."
+        )
+
+    if not frontend_dir.exists():
+        raise RuntimeError(
+            "Frontend assets directory is missing. Ensure the Docker image includes "
+            "the frontend source or a built frontend/dist directory."
+        )
+
+    return frontend_dir
 
 
 def create_app() -> FastAPI:
@@ -398,27 +423,11 @@ def create_app() -> FastAPI:
         db.commit()
         return {"detail": "User deleted"}
 
+    frontend_dir = resolve_frontend_dir()
+    app.state.frontend_dir = frontend_dir
+    app.mount("/", SPAStaticFiles(directory=frontend_dir, html=True), name="frontend")
+
     return app
 
 
 app = create_app()
-
-# Serve frontend assets from the same app (single container, same origin)
-frontend_root = Path(__file__).resolve().parents[2] / "frontend"
-frontend_dist = frontend_root / "dist"
-frontend_dir = frontend_dist if frontend_dist.exists() else frontend_root
-
-if not frontend_root.exists():
-    raise RuntimeError(
-        "Frontend assets are missing. Ensure the Docker image includes /app/frontend "
-        "or provide frontend/dist for production builds."
-    )
-
-if not frontend_dir.exists():
-    raise RuntimeError(
-        "Frontend assets directory is missing. Ensure the Docker image includes "
-        "the frontend source or a built frontend/dist directory."
-    )
-
-app.state.frontend_dir = frontend_dir
-app.mount("/", SPAStaticFiles(directory=frontend_dir, html=True), name="frontend")

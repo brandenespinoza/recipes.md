@@ -391,7 +391,7 @@ root.innerHTML = `
           &#9776;
         </button>
         <a id="logo-recipes" class="logo" href="/recipes" data-link>
-          RECIPES.MD
+          RECIPE.MD
         </a>
         <span class="header-spacer"></span>
       </div>
@@ -625,7 +625,7 @@ const ROUTES = {
   register: "/account/register",
 };
 const RECIPE_PREFIX = "/recipes/";
-const BASE_TITLE = "RECIPES.MD";
+const BASE_TITLE = "RECIPE.MD";
 
 function parseShareTargetParams(searchParams) {
   if (!searchParams) return null;

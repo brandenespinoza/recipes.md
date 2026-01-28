@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_name: str = "RECIPES.MD"
+    app_name: str = "RECIPE.MD"
     api_prefix: str = "/api"
 
     # JWT / multi-user auth
