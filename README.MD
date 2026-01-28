@@ -32,7 +32,7 @@ Core flow:
 
 - URL → clean Markdown with YAML front matter
 - Local filesystem storage for recipes (`/recipes/*.md`)
-- SQLite auth database (`/recipes/auth.db` by default, configurable)
+- SQLite auth database (`/data/auth.db` by default, no override)
 - Minimal single-page UI for list + read (dark theme)
 - Multi-user auth with admin bootstrap
 - Rescrape endpoint to refresh a saved recipe
@@ -104,13 +104,12 @@ are sourced from `.env` via `docker-compose.yml`.
 - `OPENAI_API_KEY` (required) — OpenAI API key
 - `OPENAI_MODEL` (required)
 - `SECRET_KEY` (required) — JWT signing key
-
-Other settings are hard-coded defaults in `backend/app/config.py`.
+- Other settings are hard-coded defaults in `backend/app/config.py`.
 
 ## Data & storage
 
 - Recipe Markdown files live in `./recipes/*.md`
-- User database lives in `./recipes/auth.db` by default.
+- User database lives in `./data/auth.db` by default (exposed as `/data/auth.db` in Docker).
 
 To back up everything, copy the `recipes/` directory.
 

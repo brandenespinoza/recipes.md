@@ -17,9 +17,6 @@ class Settings(BaseSettings):
 
     # Storage (Docker: hard-coded to /recipes)
     output_dir: Path = Path("/recipes")
-    # Optional separate auth DB path (defaults to output_dir/auth.db)
-    auth_db_path: Path | None = None
-
     # OpenAI / LLM
     openai_api_key: str
     openai_model: str

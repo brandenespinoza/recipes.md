@@ -10,19 +10,17 @@ from sqlalchemy.orm import Session, sessionmaker
 from .config import get_settings
 
 Base = declarative_base()
+DEFAULT_AUTH_DB_PATH = Path("/data/auth.db")
 
 
 def get_database_url() -> str:
   """
   Returns the database URL.
-  For this app we default to a SQLite DB stored alongside recipes so that
-  user accounts persist with the volume.
+  By default we store the SQLite DB in /data so user accounts persist with the
+  data volume and remain separate from the recipe files.
   """
-  settings = get_settings()
-  if settings.auth_db_path and str(settings.auth_db_path).strip():
-    db_path = Path(settings.auth_db_path).expanduser()
-  else:
-    db_path = settings.output_dir / "auth.db"
+  _ = get_settings()
+  db_path = DEFAULT_AUTH_DB_PATH
   db_path.parent.mkdir(parents=True, exist_ok=True)
   return f"sqlite:///{db_path}"
 
