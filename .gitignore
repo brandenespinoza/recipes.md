@@ -1,0 +1,20 @@
+# Python artifacts
+backend/app/__pycache__/
+*.pyc
+
+# Virtualenv
+.venv/
+
+# Frontend build output
+frontend/dist/
+
+# Local auth DB
+auth.db
+
+# Recipe files
+recipes/
+
+# Environment files
+.env
+.env.local
+.env.*

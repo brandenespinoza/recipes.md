@@ -1,0 +1,10 @@
+services:
+  app:
+    image: ghcr.io/brandenespinoza/recipes.md:latest
+    env_file:
+      - .env
+    volumes:
+      - ./recipes:/recipes
+      - ./data:/data
+    ports:
+      - "8000:8000"
